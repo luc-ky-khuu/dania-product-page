@@ -119,7 +119,7 @@ export default class Product extends React.Component {
         const { product, variant } = this.state;
         let bg = product.variants[index].colorHex;
         let border = 'color-box-border'
-        if (product.variants[index].colorHex.length > 6) {
+        if (product.variants[index].colorHex.length > 7) {
           bg = product.variants[index].color;
         }
         if (variant === index) {
