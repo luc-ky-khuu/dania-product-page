@@ -106,6 +106,12 @@ export default class Product extends React.Component {
     })
   }
 
+  changeColor(index) {
+    this.setState({
+      variant: index
+    })
+  }
+
   makeColorBoxes(item, index) {
     const { product } = this.state;
     let bg = product.variants[index].colorHex;
@@ -113,8 +119,10 @@ export default class Product extends React.Component {
       bg = product.variants[index].color;
     }
     return(
-      <div key={index} className='color-box' style={{ backgroundColor: bg}}>
-      </div>
+      <a key={index} onClick={() => this.changeColor(index)}>
+        <div  className='color-box' style={{ backgroundColor: bg }}>
+        </div>
+      </a>
     )
   }
 
