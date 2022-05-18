@@ -6,6 +6,7 @@ ul {
   list-style: none;
   padding: 0;
 }
+
 .margin-0 {
   margin: 0;
 }
@@ -27,6 +28,10 @@ ul {
   border: rgb(134, 134, 134) solid 1px;
   margin: 0 10px;
   padding: 2px;
+}
+
+.italic {
+  font-style: italic;
 }
 
 .selected-box {

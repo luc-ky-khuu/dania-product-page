@@ -173,6 +173,7 @@ export default class Product extends React.Component {
               <ul>
                 {this.showDetails()}
               </ul>
+              {product.variants[variant].assembly && <p className='italic'>* Assembly required</p>}
             </div>
             <div className='row'>
               {this.makeColorBoxes()}
