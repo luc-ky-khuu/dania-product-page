@@ -87,12 +87,14 @@ export default class Product extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      zipcode: null,
+      zipcode: '',
       product: null,
       variant: null
     }
     this.makeColorBoxes = this.makeColorBoxes.bind(this);
     this.showDetails = this.showDetails.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.checkZip = this.checkZip.bind(this);
   }
 
   componentDidMount() {
@@ -151,8 +153,22 @@ export default class Product extends React.Component {
     )
   }
 
+  handleChange(event) {
+    this.setState({
+      zipcode: event.target.value
+    })
+  }
+
+  checkZip(event) {
+    event.preventDefault();
+    console.log(this.state.zipcode)
+    this.setState({
+      zipcode: ''
+    })
+  }
+
   render() {
-    const { product, variant } = this.state
+    const { product, variant, zipcode } = this.state
     if (!product) {
       return(
         <div>
@@ -165,17 +181,22 @@ export default class Product extends React.Component {
             <img src='https://cdn.shopify.com/s/files/1/1921/1117/products/P16_19-2660-3_BE_upd_2_5000x.jpg?v=1628331535'></img>
           </div>
           <div className="col-4 width-100">
-            <h1 className='margin-0'>{product.productName}</h1>
+            <h1 className='m-0'>{product.productName}</h1>
             <h3 className='muted-text'>{product.variants[variant].color}</h3>
             <hr></hr>
-            <h2 className='margin-0 fs-3'>${product.variants[variant].price}</h2>
+            <h2 className='m-0 fs-3'>${product.variants[variant].price}</h2>
             <div>
               <ul>
                 {this.showDetails()}
               </ul>
               {product.variants[variant].assembly && <p className='italic'>* Assembly required</p>}
             </div>
-            <div className='row'>
+            <div>
+              <form onSubmit={this.checkZip} action="submit">
+                <input type="text" placeholder='Enter zip code' value={zipcode} onChange={this.handleChange}/>
+              </form>
+            </div>
+            <div className='row mt-1'>
               {this.makeColorBoxes()}
             </div>
           </div>
