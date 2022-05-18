@@ -1,0 +1,38 @@
+a {
+  cursor: pointer;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+.margin-0 {
+  margin: 0;
+}
+
+.muted-text {
+  color: rgb(134, 134, 134);
+}
+
+.fs-3 {
+  font-size: 2.5rem;
+}
+
+.color-box {
+  width: 2rem;
+  height: 2rem;
+}
+
+.color-box-border {
+  border: rgb(134, 134, 134) solid 1px;
+  margin: 0 10px;
+  padding: 2px;
+}
+
+.selected-box {
+  border: black solid 2px;
+}
+
+a:nth-child(1) > div.color-box-border {
+  margin-left: 0;
+}

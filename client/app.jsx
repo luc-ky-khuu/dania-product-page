@@ -1,11 +1,15 @@
 import React from 'react'
+import Product from './pages/product'
 
 export default class App extends React.Component {
   render() {
     return(
-      <div>
-        Dania Furniture Product Page
-      </div>
+      <>
+        <h1>Dania Furniture Product Page</h1>
+        <div className='container'>
+          <Product />
+        </div>
+      </>
     )
   }
 }
