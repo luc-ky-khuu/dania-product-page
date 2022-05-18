@@ -2,7 +2,7 @@ require('dotenv/config');
 const express = require('express');
 const app = express();
 const product = {
-  "productName": "Leather Sofa",
+"productName": "Leather Sofa",
   "variants": [
     {
       "sku": "A01*Leather-Purple",
@@ -83,8 +83,13 @@ const product = {
       }
     }
   ]
-}
+};
 
+app.get('/api/test', (req, res) => {
+  const promiseProd = new Promise((resolve, reject) => {
+    res.send(product)
+  })
+})
 
 app.listen(process.env.PORT, () => {
   // eslint-disable-next-line no-console
