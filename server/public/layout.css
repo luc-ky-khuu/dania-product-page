@@ -1,6 +1,6 @@
 img {
   object-fit: cover;
-  width: 450px;
+  width: 100%
 }
 
 .container {
@@ -12,10 +12,22 @@ img {
   flex-basis: calc(8/12)
 }
 
+.col-4 {
+  flex-basis: calc(4/12)
+}
+
+.width-100 {
+  width: 100%;
+}
+
 .row {
   display: flex;
 }
 
 .justify-center {
   justify-content: center
+}
+
+.justify-between {
+  justify-content: space-between
 }

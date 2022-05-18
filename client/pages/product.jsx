@@ -91,6 +91,7 @@ export default class Product extends React.Component {
       product: null,
       variant: null
     }
+    this.makeColorBoxes = this.makeColorBoxes.bind(this)
   }
 
   componentDidMount() {
@@ -105,6 +106,18 @@ export default class Product extends React.Component {
     })
   }
 
+  makeColorBoxes(item, index) {
+    const { product } = this.state;
+    let bg = product.variants[index].colorHex;
+    if (product.variants[index].colorHex.length > 6) {
+      bg = product.variants[index].color;
+    }
+    return(
+      <div key={index} className='color-box' style={{ backgroundColor: bg}}>
+      </div>
+    )
+  }
+
   render() {
     const { product, variant } = this.state
     return (
@@ -112,9 +125,14 @@ export default class Product extends React.Component {
         <div className='col-8'>
           <img src='https://cdn.shopify.com/s/files/1/1921/1117/products/P16_19-2660-3_BE_upd_2_5000x.jpg?v=1628331535'></img>
         </div>
-        <div className="col-8">
-          <h1>{product ? product.productName : 'product not found'}</h1>
-          <h3>{product && product.variants[variant].title}</h3>
+        <div className="col-4 width-100">
+          <h1 className='margin-0'>{product ? product.productName : 'product not found'}</h1>
+          <h3 className='muted-text'>{product && product.variants[variant].color}</h3>
+          <hr></hr>
+          <h2 className='margin-0 fs-3'>{product && `$${product.variants[variant].price}`}</h2>
+          <div className='row'>
+            {product && product.variants.map((item, index) => this.makeColorBoxes(item, index))}
+          </div>
         </div>
       </div>
     )
