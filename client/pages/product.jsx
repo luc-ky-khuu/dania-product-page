@@ -91,7 +91,8 @@ export default class Product extends React.Component {
       product: null,
       variant: null
     }
-    this.makeColorBoxes = this.makeColorBoxes.bind(this)
+    this.makeColorBoxes = this.makeColorBoxes.bind(this);
+    this.showDetails = this.showDetails.bind(this);
   }
 
   componentDidMount() {
@@ -112,37 +113,73 @@ export default class Product extends React.Component {
     })
   }
 
-  makeColorBoxes(item, index) {
-    const { product } = this.state;
-    let bg = product.variants[index].colorHex;
-    if (product.variants[index].colorHex.length > 6) {
-      bg = product.variants[index].color;
-    }
-    return(
-      <a key={index} onClick={() => this.changeColor(index)}>
-        <div  className='color-box' style={{ backgroundColor: bg }}>
-        </div>
-      </a>
+  makeColorBoxes() {
+    return (
+      product.variants.map((item, index) => {
+        const { product, variant } = this.state;
+        let bg = product.variants[index].colorHex;
+        let border = 'color-box-border'
+        if (product.variants[index].colorHex.length > 6) {
+          bg = product.variants[index].color;
+        }
+        if (variant === index) {
+          border = 'color-box-border selected-box'
+        }
+        return (
+          <a key={index} onClick={() => this.changeColor(index)}>
+            <div className={border}>
+              <div className='color-box' style={{ backgroundColor: bg }}>
+              </div>
+            </div>
+          </a>
+        )
+      })
+    )
+
+  }
+
+  showDetails() {
+    const { product, variant } = this.state
+    return (
+      product.variants[variant].details.map((detail, index) => {
+        return (
+          <li key={index}>
+            {detail}
+          </li>
+        )
+      })
     )
   }
 
   render() {
     const { product, variant } = this.state
-    return (
-      <div className='row'>
-        <div className='col-8'>
-          <img src='https://cdn.shopify.com/s/files/1/1921/1117/products/P16_19-2660-3_BE_upd_2_5000x.jpg?v=1628331535'></img>
+    if (!product) {
+      return(
+        <div>
         </div>
-        <div className="col-4 width-100">
-          <h1 className='margin-0'>{product ? product.productName : 'product not found'}</h1>
-          <h3 className='muted-text'>{product && product.variants[variant].color}</h3>
-          <hr></hr>
-          <h2 className='margin-0 fs-3'>{product && `$${product.variants[variant].price}`}</h2>
-          <div className='row'>
-            {product && product.variants.map((item, index) => this.makeColorBoxes(item, index))}
+      )
+    } else {
+      return (
+        <div className='row'>
+          <div className='col-8'>
+            <img src='https://cdn.shopify.com/s/files/1/1921/1117/products/P16_19-2660-3_BE_upd_2_5000x.jpg?v=1628331535'></img>
+          </div>
+          <div className="col-4 width-100">
+            <h1 className='margin-0'>{product.productName}</h1>
+            <h3 className='muted-text'>{product.variants[variant].color}</h3>
+            <hr></hr>
+            <h2 className='margin-0 fs-3'>${product.variants[variant].price}</h2>
+            <div>
+              <ul>
+                {this.showDetails()}
+              </ul>
+            </div>
+            <div className='row'>
+              {this.makeColorBoxes()}
+            </div>
           </div>
         </div>
-      </div>
-    )
+      )
+    }
   }
 }
