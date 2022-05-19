@@ -154,9 +154,13 @@ export default class Product extends React.Component {
   }
 
   handleChange(event) {
-    this.setState({
-      zipcode: event.target.value
-    })
+    const numbers = /[0-9\b]/g;
+    const input = event.target.value;
+    if ((input.match(numbers) || !input) && input.length <= 5) {
+      this.setState({
+        zipcode: input
+      })
+    }
   }
 
   checkZip(event) {
@@ -182,7 +186,7 @@ export default class Product extends React.Component {
           </div>
           <div className="col-4 width-100">
             <h1 className='m-0'>{product.productName}</h1>
-            <h3 className='muted-text'>{product.variants[variant].color}</h3>
+            <h3 className='muted-text'>{product.variants[variant].title}</h3>
             <hr></hr>
             <h2 className='m-0 fs-3'>${product.variants[variant].price}</h2>
             <div>
@@ -194,6 +198,7 @@ export default class Product extends React.Component {
             <div>
               <form onSubmit={this.checkZip} action="submit">
                 <input type="text" placeholder='Enter zip code' value={zipcode} onChange={this.handleChange}/>
+                <button type="submit">Check Availability</button>
               </form>
             </div>
             <div className='row mt-1'>
