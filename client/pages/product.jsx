@@ -88,6 +88,7 @@ export default class Product extends React.Component {
     super(props);
     this.state = {
       zipcode: '',
+      changeZip: true,
       product: null,
       variant: null
     }
@@ -154,6 +155,9 @@ export default class Product extends React.Component {
   }
 
   handleChange(event) {
+    this.setState({
+      changeZip: true
+    })
     const numbers = /[0-9\b]/g;
     const input = event.target.value;
     if ((input.match(numbers) || !input) && input.length <= 5) {
@@ -167,12 +171,12 @@ export default class Product extends React.Component {
     event.preventDefault();
     console.log(this.state.zipcode)
     this.setState({
-      zipcode: ''
+      changeZip: false
     })
   }
 
   render() {
-    const { product, variant, zipcode } = this.state
+    const { product, variant, zipcode, changeZip } = this.state
     if (!product) {
       return(
         <div>
@@ -196,10 +200,16 @@ export default class Product extends React.Component {
               {product.variants[variant].assembly && <p className='italic'>* Assembly required</p>}
             </div>
             <div>
-              <form onSubmit={this.checkZip} action="submit">
-                <input type="text" placeholder='Enter zip code' value={zipcode} onChange={this.handleChange}/>
-                <button type="submit">Check Availability</button>
-              </form>
+              {changeZip ?
+                <form onSubmit={this.checkZip} action="submit">
+                  <input type="text" placeholder='Enter zip code' value={zipcode} onChange={this.handleChange} />
+                  <button type="submit">Check Availability</button>
+                </form> :
+                <>
+                  <p>Ship To: {zipcode}</p>
+                  <a onClick={this.handleChange}>Change zipcode</a>
+                </>
+                }
             </div>
             <div className='row mt-1'>
               {this.makeColorBoxes()}
