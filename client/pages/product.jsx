@@ -89,13 +89,15 @@ export default class Product extends React.Component {
     this.state = {
       zipcode: '',
       changeZip: true,
+      checkZip: '',
       product: null,
       variant: null
     }
     this.makeColorBoxes = this.makeColorBoxes.bind(this);
     this.showDetails = this.showDetails.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.checkZip = this.checkZip.bind(this);
+    this.changeZipForm = this.changeZipForm.bind(this);
+    this.submitZip = this.submitZip.bind(this);
   }
 
   componentDidMount() {
@@ -155,6 +157,7 @@ export default class Product extends React.Component {
   }
 
   handleChange(event) {
+    event.preventDefault();
     this.setState({
       changeZip: true
     })
@@ -162,21 +165,29 @@ export default class Product extends React.Component {
     const input = event.target.value;
     if ((input.match(numbers) || !input) && input.length <= 5) {
       this.setState({
-        zipcode: input
+        checkZip: input
       })
     }
   }
 
-  checkZip(event) {
+  submitZip(event) {
     event.preventDefault();
-    console.log(this.state.zipcode)
     this.setState({
-      changeZip: false
+      zipcode: this.state.checkZip
+    })
+    this.changeZipForm(event);
+  }
+
+  changeZipForm(event) {
+    event.preventDefault();
+    this.setState({
+      changeZip: !this.state.changeZip,
+      checkZip: ''
     })
   }
 
   render() {
-    const { product, variant, zipcode, changeZip } = this.state
+    const { product, variant, zipcode, changeZip, checkZip } = this.state
     if (!product) {
       return(
         <div>
@@ -193,27 +204,34 @@ export default class Product extends React.Component {
             <h3 className='muted-text'>{product.variants[variant].title}</h3>
             <hr></hr>
             <h2 className='m-0 fs-3'>${product.variants[variant].price}</h2>
+            <div className='row mt-1'>
+              {this.makeColorBoxes()}
+            </div>
             <div>
+              {changeZip ?
+                <form className='mt-1' onSubmit={this.submitZip} action="submit">
+                  <input className='lh' type="text" placeholder='Enter zip code' value={checkZip} onChange={this.handleChange} />
+                  <div className="row mt-1">
+                    <button className='btn add-btn' type="submit">Submit</button>
+                    <a className='btn cancel-btn' onClick={this.changeZipForm}>Cancel</a>
+                  </div>
+                </form> :
+                <>
+                  <div className="row">
+                    <p><span className='bold'>Ship To:</span> {zipcode}</p>
+                    <p><a className='zipcode' href='' onClick={this.changeZipForm}>Change Zip</a></p>
+                  </div>
+                </>
+              }
+            </div>
+            <div>
+              <h2 >Details</h2>
               <ul>
                 {this.showDetails()}
               </ul>
               {product.variants[variant].assembly && <p className='italic'>* Assembly required</p>}
             </div>
-            <div>
-              {changeZip ?
-                <form onSubmit={this.checkZip} action="submit">
-                  <input type="text" placeholder='Enter zip code' value={zipcode} onChange={this.handleChange} />
-                  <button type="submit">Check Availability</button>
-                </form> :
-                <>
-                  <p>Ship To: {zipcode}</p>
-                  <a onClick={this.handleChange}>Change zipcode</a>
-                </>
-                }
-            </div>
-            <div className='row mt-1'>
-              {this.makeColorBoxes()}
-            </div>
+
           </div>
         </div>
       )
