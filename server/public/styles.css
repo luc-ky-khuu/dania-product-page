@@ -65,7 +65,7 @@ a:nth-child(1) > div.color-box-border {
   text-decoration: none;
 }
 
-.cancel-btn {
+.muted-btn {
   border: solid rgb(90, 90, 90) 1px;
   color: rgb(90, 90, 90);
 }
@@ -79,6 +79,10 @@ a:nth-child(1) > div.color-box-border {
   border: solid 1px;
   color: white;
   background-color: rgb(41, 41, 41)
+}
+
+.add-cart {
+  width: 8rem;
 }
 
 .add-btn {
@@ -96,8 +100,29 @@ a:nth-child(1) > div.color-box-border {
 
 .qty {
   width: 2rem;
+  padding: 0.5rem;
+  border-left: 1px solid rgb(90, 90, 90);
+  border-right: 1px solid rgb(90, 90, 90);
+}
+
+button:disabled,
+button:hover:disabled,
+button:active:disabled {
+  background-color: rgb(228, 228, 228);
+  color: rgb(175, 175, 175);
+}
+.qty-btn {
+  width: 2rem;
   padding: 0;
   border: none;
+}
+
+.qty-btn:hover {
+  color: rgb(163, 37, 35);
+}
+
+.qty-btn:active {
+  background-color: rgb(212, 212, 212);
 }
 
 .material-symbols-outlined {

@@ -118,12 +118,13 @@ export default class Product extends React.Component {
     const { zipcode, product, variant } = this.state;
     const items = product.variants[index].inventory
     let inventory = items.otherWarehouse;
-    if (zipcode >= 9000 && zipcode <= 96699) {
+    if (zipcode >= 90000 && zipcode <= 96699) {
       inventory = items.caliWarehouse
     }
     this.setState({
       variant: index,
-      maxInventory: inventory
+      maxInventory: inventory,
+      qty: 0
     })
   }
 
@@ -209,7 +210,7 @@ export default class Product extends React.Component {
   }
 
   render() {
-    const { product, variant, zipcode, changeZip, checkZip, qty } = this.state
+    const { product, variant, zipcode, changeZip, checkZip, qty, maxInventory } = this.state
     if (!product) {
       return(
         <div>
@@ -235,7 +236,7 @@ export default class Product extends React.Component {
                     <input className='lh' type="text" placeholder='Enter zip code' value={checkZip} onChange={this.handleChange} />
                     <div className="row mt-1">
                       <button className='btn add-btn' type="submit">Submit</button>
-                      <a className='btn cancel-btn' onClick={this.changeZipForm}>Cancel</a>
+                      <a className='btn muted-btn' onClick={this.changeZipForm}>Cancel</a>
                     </div>
                   </form>
                 : <>
@@ -246,12 +247,12 @@ export default class Product extends React.Component {
                     <div className="width-100">
                       <form className='width-100 justify-between row' action="submit">
                         <label className='my-auto'>QTY </label>
-                        <div className="row">
-                          <button className='qty material-symbols-outlined' onClick={event => this.changeQty(event, -1)}>remove</button>
-                          <div className='my-auto qty text-center'>{qty}</div>
-                          <button className='qty material-symbols-outlined' onClick={event => this.changeQty(event, 1)}>add</button>
+                        <div className="row muted-btn justify-between">
+                          <button className='qty-btn material-symbols-outlined' onClick={event => this.changeQty(event, -1)} disabled={(qty - 1) < 1} >remove</button>
+                          <div className=' qty text-center'>{qty}</div>
+                        <button className='qty-btn material-symbols-outlined' onClick={event => this.changeQty(event, 1)} disabled={(qty + 1) > maxInventory}>add</button>
                         </div>
-                        <button className='btn add-btn'>Add to Cart</button>
+                        <button className='btn add-btn add-cart'>Add to Cart</button>
                       </form>
                     </div>
                   </>
