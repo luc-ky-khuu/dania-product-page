@@ -87,12 +87,13 @@ export default class Product extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      zipcode: '',
-      changeZip: true,
+      zipcode: 93907,
+      changeZip: false,
       checkZip: '',
       product: null,
       variant: null,
-      maxInventory: 0
+      maxInventory: 0,
+      qty: 0
     }
     this.makeColorBoxes = this.makeColorBoxes.bind(this);
     this.showDetails = this.showDetails.bind(this);
@@ -189,8 +190,11 @@ export default class Product extends React.Component {
     })
   }
 
-  renderInventory() {
-
+  changeQty(event, num) {
+    event.preventDefault();
+    this.setState({
+      qty: this.state.qty + num
+    })
   }
 
   changeZipForm(event) {
@@ -205,7 +209,7 @@ export default class Product extends React.Component {
   }
 
   render() {
-    const { product, variant, zipcode, changeZip, checkZip } = this.state
+    const { product, variant, zipcode, changeZip, checkZip, qty } = this.state
     if (!product) {
       return(
         <div>
@@ -226,39 +230,40 @@ export default class Product extends React.Component {
               {this.makeColorBoxes()}
             </div>
             <div>
-              {changeZip ?
-                <form className='mt-1' onSubmit={this.submitZip} action="submit">
-                  <input className='lh' type="text" placeholder='Enter zip code' value={checkZip} onChange={this.handleChange} />
-                  <div className="row mt-1">
-                    <button className='btn add-btn' type="submit">Submit</button>
-                    <a className='btn cancel-btn' onClick={this.changeZipForm}>Cancel</a>
-                  </div>
-                </form> :
-                <>
-                  <div className="row">
-                    <p><span className='bold'>Ship To:</span> {zipcode}</p>
-                    <p><a className='zipcode' href='' onClick={this.changeZipForm}>Change Zip</a></p>
-                  </div>
-                  <div className="row">
-                    <button>
-                      -
-                    </button>
-                    <p>1</p>
-                    <button>
-                      +
-                    </button>
-                  </div>
-                </>
+              { changeZip
+                ? <form className='mt-1' onSubmit={this.submitZip} action="submit">
+                    <input className='lh' type="text" placeholder='Enter zip code' value={checkZip} onChange={this.handleChange} />
+                    <div className="row mt-1">
+                      <button className='btn add-btn' type="submit">Submit</button>
+                      <a className='btn cancel-btn' onClick={this.changeZipForm}>Cancel</a>
+                    </div>
+                  </form>
+                : <>
+                    <div className="row">
+                      <p><span className='bold'>Ship To:</span> {zipcode}</p>
+                      <p><a className='zipcode' href='' onClick={this.changeZipForm}>Change Zip</a></p>
+                    </div>
+                    <div className="width-100">
+                      <form className='width-100 justify-between row' action="submit">
+                        <label className='my-auto'>QTY </label>
+                        <div className="row">
+                          <button className='qty material-symbols-outlined' onClick={event => this.changeQty(event, -1)}>remove</button>
+                          <div className='my-auto qty text-center'>{qty}</div>
+                          <button className='qty material-symbols-outlined' onClick={event => this.changeQty(event, 1)}>add</button>
+                        </div>
+                        <button className='btn add-btn'>Add to Cart</button>
+                      </form>
+                    </div>
+                  </>
               }
             </div>
             <div>
-              <h2 >Details</h2>
+              <h2>Details</h2>
               <ul>
                 {this.showDetails()}
               </ul>
               {product.variants[variant].assembly && <p className='italic'>* Assembly required</p>}
             </div>
-
           </div>
         </div>
       )

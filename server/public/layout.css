@@ -32,3 +32,19 @@ img {
 .justify-between {
   justify-content: space-between
 }
+
+.text-center {
+  text-align: center;
+}
+
+.m-0 {
+  margin: 0;
+}
+
+.my-auto {
+  margin: auto 0;
+}
+
+.mt-1 {
+  margin-top: 1rem;
+}
