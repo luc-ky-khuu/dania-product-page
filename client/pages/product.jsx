@@ -91,7 +91,8 @@ export default class Product extends React.Component {
       changeZip: true,
       checkZip: '',
       product: null,
-      variant: null
+      variant: null,
+      maxInventory: 0
     }
     this.makeColorBoxes = this.makeColorBoxes.bind(this);
     this.showDetails = this.showDetails.bind(this);
@@ -101,7 +102,7 @@ export default class Product extends React.Component {
   }
 
   componentDidMount() {
-    // fetch('/')
+    // fetch('placeholder.url/products/Leather+Sofa')
     // .then(response => response.json())
     // .then(result => this.setState({
     //   product: result
@@ -112,9 +113,16 @@ export default class Product extends React.Component {
     })
   }
 
-  changeColor(index) {
+  changeVariant(index) {
+    const { zipcode, product, variant } = this.state;
+    const items = product.variants[index].inventory
+    let inventory = items.otherWarehouse;
+    if (zipcode >= 9000 && zipcode <= 96699) {
+      inventory = items.caliWarehouse
+    }
     this.setState({
-      variant: index
+      variant: index,
+      maxInventory: inventory
     })
   }
 
@@ -131,7 +139,7 @@ export default class Product extends React.Component {
           border = 'color-box-border selected-box'
         }
         return (
-          <a key={index} onClick={() => this.changeColor(index)}>
+          <a key={index} onClick={() => this.changeVariant(index)}>
             <div className={border}>
               <div className='color-box' style={{ backgroundColor: bg }}>
               </div>
@@ -172,14 +180,24 @@ export default class Product extends React.Component {
 
   submitZip(event) {
     event.preventDefault();
+    if (!this.state.checkZip || this.state.checkZip.length < 5) {
+      return
+    }
     this.setState({
-      zipcode: this.state.checkZip
+      zipcode: this.state.checkZip,
+      changeZip: false
     })
-    this.changeZipForm(event);
+  }
+
+  renderInventory() {
+
   }
 
   changeZipForm(event) {
     event.preventDefault();
+    if (!this.state.zipcode) {
+      return;
+    }
     this.setState({
       changeZip: !this.state.changeZip,
       checkZip: ''
@@ -220,6 +238,15 @@ export default class Product extends React.Component {
                   <div className="row">
                     <p><span className='bold'>Ship To:</span> {zipcode}</p>
                     <p><a className='zipcode' href='' onClick={this.changeZipForm}>Change Zip</a></p>
+                  </div>
+                  <div className="row">
+                    <button>
+                      -
+                    </button>
+                    <p>1</p>
+                    <button>
+                      +
+                    </button>
                   </div>
                 </>
               }
