@@ -1,13 +1,15 @@
-a {
+a,
+button {
   cursor: pointer;
+}
+
+body {
+  font-family: Roboto, sans-serif
 }
 
 ul {
   list-style: none;
   padding: 0;
-}
-.margin-0 {
-  margin: 0;
 }
 
 .muted-text {
@@ -16,6 +18,14 @@ ul {
 
 .fs-3 {
   font-size: 2.5rem;
+}
+
+.bold {
+  font-weight: 900;
+}
+
+.fw-400 {
+  font-weight: 400;
 }
 
 .color-box {
@@ -29,10 +39,119 @@ ul {
   padding: 2px;
 }
 
+.no-stock {
+  background-image: url('close.svg');
+  background-position: center;
+  opacity: 70%;
+}
+
+.no-stock-border {
+  border: dashed gray 1px;
+  opacity: 60%;
+  margin: 0 10px;
+  padding: 2px;
+}
+
+.italic {
+  font-style: italic;
+}
+
 .selected-box {
   border: black solid 2px;
 }
 
-a:nth-child(1) > div.color-box-border {
+a:nth-child(1) > div.color-box-border,
+a:nth-child(1) > div.no-stock-border {
   margin-left: 0;
+}
+
+.zipcode {
+  color: rgb(219, 33, 33);
+  margin-left: 1rem;
+}
+
+.zipcode:hover {
+  color: rgb(173, 0, 0);
+  text-decoration: none;
+}
+
+.btn {
+  border: none;
+  padding: 0.5rem 0.8rem;
+  margin-right: 1rem;
+  border-radius: 5px;
+  text-decoration: none;
+}
+
+.muted-btn {
+  border: solid rgb(90, 90, 90) 1px;
+  color: rgb(90, 90, 90);
+}
+
+.muted-text {
+  color: rgb(90, 90, 90);
+}
+
+.cancel-btn:hover {
+  border: solid black 1px;
+  color: black;
+}
+
+.cancel-btn:active {
+  border: solid 1px;
+  color: white;
+  background-color: rgb(41, 41, 41)
+}
+
+.add-cart {
+  width: 8rem;
+}
+
+.add-btn {
+  background-color: rgb(163,52,51);
+  color: white;
+}
+
+.add-btn:hover {
+  background-color: rgb(163, 37, 35);
+}
+
+.add-btn:active {
+  background-color: rgb(134, 4, 2);
+}
+
+.qty {
+  width: 2rem;
+  padding: 0.5rem;
+  border-left: 1px solid rgb(90, 90, 90);
+  border-right: 1px solid rgb(90, 90, 90);
+}
+
+button:disabled,
+button:hover:disabled,
+button:active:disabled {
+  background-color: rgb(204, 204, 204);
+  color: rgb(167, 167, 167);
+  cursor: default;
+}
+.qty-btn {
+  width: 2rem;
+  padding: 0;
+  border: none;
+}
+
+.qty-btn:hover {
+  color: rgb(163, 37, 35);
+}
+
+.qty-btn:active {
+  background-color: rgb(212, 212, 212);
+}
+
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 48
 }

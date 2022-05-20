@@ -88,48 +88,79 @@ export default class Product extends React.Component {
     super(props);
     this.state = {
       zipcode: null,
+      changeZip: true,
+      checkZip: '',
       product: null,
-      variant: null
+      variant: null,
+      warehouse: null,
+      maxInventory: 0,
+      qty: 0,
+      cart:{}
     }
     this.makeColorBoxes = this.makeColorBoxes.bind(this);
     this.showDetails = this.showDetails.bind(this);
+    this.handleZip = this.handleZip.bind(this);
+    this.changeZipForm = this.changeZipForm.bind(this);
+    this.submitZip = this.submitZip.bind(this);
+    this.addCart = this.addCart.bind(this);
   }
 
   componentDidMount() {
-    // fetch('/')
+    // fetch('placeholder.url/products/Leather+Sofa')
     // .then(response => response.json())
     // .then(result => this.setState({
-    //   product: result
+    //   product: result,
+    //   variant: 0
     // }))
+    const { zipcode } = this.state;
+    if (zipcode) {
+      if (zipcode >= 90000 && zipcode <= 96699) {
+        this.setState({
+          warehouse: 'caliWarehouse',
+          changeZip: false
+        })
+      } else {
+        this.setState({
+          warehouse: 'otherWarehouse',
+          changeZip: false
+        })
+      }
+    }
     this.setState({
       product: product,
       variant: 0
     })
   }
 
-  changeColor(index) {
+  changeVariant(index) {
+    const { product, warehouse } = this.state;
+    const items = product.variants[index].inventory
     this.setState({
-      variant: index
+      variant: index,
+      maxInventory: items[warehouse],
+      qty: 0
     })
   }
 
   makeColorBoxes() {
     return (
       product.variants.map((item, index) => {
-        const { product, variant } = this.state;
+        const { product, variant, maxInventory, warehouse } = this.state;
         let bg = product.variants[index].colorHex;
+        let inventory = product.variants[index].inventory
         let border = 'color-box-border'
-        if (product.variants[index].colorHex.length > 6) {
+        let box = 'color-box'
+        if (product.variants[index].colorHex.length > 7) {
           bg = product.variants[index].color;
         }
-        if (variant === index) {
-          border = 'color-box-border selected-box'
+        if (inventory[warehouse] === 0) {
+          border = 'no-stock-border';
+          box = 'color-box no-stock';
         }
         return (
-          <a key={index} onClick={() => this.changeColor(index)}>
-            <div className={border}>
-              <div className='color-box' style={{ backgroundColor: bg }}>
-              </div>
+          <a key={index} onClick={() => this.changeVariant(index)}>
+            <div className={variant === index ? `${border} selected-box` : border} >
+              <div className={box} style={{ backgroundColor: bg }}></div>
             </div>
           </a>
         )
@@ -151,8 +182,78 @@ export default class Product extends React.Component {
     )
   }
 
+  handleZip(event) {
+    event.preventDefault();
+    this.setState({
+      changeZip: true
+    })
+    const numbers = /[0-9\b]/g;
+    const input = event.target.value;
+    if ((input.match(numbers) || !input) && input.length <= 5) {
+      this.setState({
+        checkZip: input
+      })
+    }
+  }
+
+  submitZip(event) {
+    event.preventDefault();
+    const { checkZip, variant, product, zipcode} = this.state;
+    const items = product.variants[variant].inventory
+    if (!checkZip || checkZip.length < 5) {
+      return
+    }
+    let warehouse = 'otherWarehouse';
+    if (checkZip >= 90000 && checkZip <= 96699) {
+      warehouse = 'caliWarehouse'
+    }
+    this.setState({
+      zipcode: checkZip,
+      changeZip: false,
+      warehouse: warehouse,
+      maxInventory: items[warehouse]
+    })
+  }
+
+  addCart(event) {
+    event.preventDefault();
+    const { cart, qty, product, variant } = this.state;
+    if (qty === 0) {
+      return;
+    }
+    const sku = product.variants[variant].sku
+    const updatedCart = Object.assign({}, cart);
+    if (updatedCart[sku]) {
+      updatedCart[sku] = updatedCart[sku] + qty
+    } else {
+      updatedCart[sku] = qty
+    }
+    this.setState({
+      cart: updatedCart,
+      qty: 0
+    })
+  }
+
+  changeZipForm(event) {
+    event.preventDefault();
+    if (!this.state.zipcode) {
+      return;
+    }
+    this.setState({
+      changeZip: !this.state.changeZip,
+      checkZip: ''
+    })
+  }
+
+  changeQty(event, num) {
+    event.preventDefault();
+    this.setState({
+      qty: this.state.qty + num
+    })
+  }
+
   render() {
-    const { product, variant } = this.state
+    const { product, variant, zipcode, changeZip, checkZip, qty, maxInventory } = this.state
     if (!product) {
       return(
         <div>
@@ -164,18 +265,50 @@ export default class Product extends React.Component {
           <div className='col-8'>
             <img src='https://cdn.shopify.com/s/files/1/1921/1117/products/P16_19-2660-3_BE_upd_2_5000x.jpg?v=1628331535'></img>
           </div>
-          <div className="col-4 width-100">
-            <h1 className='margin-0'>{product.productName}</h1>
-            <h3 className='muted-text'>{product.variants[variant].color}</h3>
+          <div className="col-4">
+            <h1 className='m-0'>{product.productName}</h1>
+            <h3 className='muted-text'>{product.variants[variant].title}</h3>
             <hr></hr>
-            <h2 className='margin-0 fs-3'>${product.variants[variant].price}</h2>
+            <h2 className='m-0 fs-3 fw-400'>${product.variants[variant].price}</h2>
+            <div className='row mt-1'>
+              {this.makeColorBoxes()}
+            </div>
             <div>
+              { changeZip
+                ? <form className='mt-1' onSubmit={this.submitZip} action="submit">
+                    {!zipcode && <p className='muted-text'>Enter zip code to check availability</p>}
+                    <input className='lh' type="text" placeholder='Enter zip code' value={checkZip} onChange={this.handleZip} />
+                    <div className="row mt-1">
+                      <button className='btn add-btn' type="submit">Submit</button>
+                      <a className='btn muted-btn' onClick={this.changeZipForm}>Cancel</a>
+                    </div>
+                  </form>
+                : <>
+                    <div className="row">
+                      <p><span className='bold'>Ship To:</span> {zipcode}</p>
+                      <p><a className='zipcode' href='' onClick={this.changeZipForm}>Change Zip</a></p>
+                    </div>
+                    {maxInventory ? <p className='mt-0'>Item in stock!</p> : <p className='mt-0'>Item unavailable in this location</p>}
+                    <div className="">
+                      <form className='justify-between row' action="submit" onSubmit={this.addCart}>
+                        <label className='my-auto'>QTY </label>
+                        <div className="row muted-btn">
+                          <button className='qty-btn material-symbols-outlined' onClick={event => this.changeQty(event, -1)} disabled={(qty - 1) < 0} >remove</button>
+                          <div className=' qty text-center'>{qty}</div>
+                          <button className='qty-btn material-symbols-outlined' onClick={event => this.changeQty(event, 1)} disabled={(qty + 1) > maxInventory}>add</button>
+                        </div>
+                        <button className='btn add-btn add-cart' disabled={maxInventory === 0}>{maxInventory > 0 ? 'Add to Cart' : 'Not Available'}</button>
+                      </form>
+                    </div>
+                  </>
+              }
+            </div>
+            <div>
+              <h2>Details</h2>
               <ul>
                 {this.showDetails()}
               </ul>
-            </div>
-            <div className='row'>
-              {this.makeColorBoxes()}
+              {product.variants[variant].assembly && <p className='italic'>* Assembly required</p>}
             </div>
           </div>
         </div>

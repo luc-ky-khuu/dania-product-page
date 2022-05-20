@@ -1,33 +1,50 @@
 img {
   object-fit: cover;
-  width: 100%
+  width: 100%;
+  max-height: 500px;
 }
 
 .container {
-  max-width: 900px;
+  max-width: 1000px;
   margin: 0 auto;
 }
 
 .col-8 {
-  flex-basis: calc(8/12)
+  flex-basis: calc(calc(8/12) * 100%)
 }
 
 .col-4 {
-  flex-basis: calc(4/12)
-}
-
-.width-100 {
-  width: 100%;
+  flex-basis: calc(calc(4/12) * 100%)
 }
 
 .row {
   display: flex;
 }
 
-.justify-center {
-  justify-content: center
-}
-
 .justify-between {
   justify-content: space-between
+}
+
+.text-center {
+  text-align: center;
+}
+
+.m-0 {
+  margin: 0;
+}
+
+.my-auto {
+  margin: auto 0;
+}
+
+.mt-1 {
+  margin-top: 1rem;
+}
+
+.mt-0 {
+  margin-top: 0;
+}
+
+.lh {
+  line-height: 2rem;
 }
