@@ -92,6 +92,7 @@ export default class Product extends React.Component {
       checkZip: '',
       product: null,
       variant: null,
+      warehouse: null,
       maxInventory: 0,
       qty: 0
     }
@@ -106,7 +107,8 @@ export default class Product extends React.Component {
     // fetch('placeholder.url/products/Leather+Sofa')
     // .then(response => response.json())
     // .then(result => this.setState({
-    //   product: result
+    //   product: result,
+    //   variat: 0
     // }))
     this.setState({
       product: product,
@@ -115,15 +117,11 @@ export default class Product extends React.Component {
   }
 
   changeVariant(index) {
-    const { zipcode, product, variant } = this.state;
+    const { product, warehouse } = this.state;
     const items = product.variants[index].inventory
-    let inventory = items.otherWarehouse;
-    if (zipcode >= 90000 && zipcode <= 96699) {
-      inventory = items.caliWarehouse
-    }
     this.setState({
       variant: index,
-      maxInventory: inventory,
+      maxInventory: items[warehouse],
       qty: 0
     })
   }
@@ -182,19 +180,20 @@ export default class Product extends React.Component {
 
   submitZip(event) {
     event.preventDefault();
-    if (!this.state.checkZip || this.state.checkZip.length < 5) {
+    const { checkZip, variant, product, zipcode} = this.state;
+    const items = product.variants[variant].inventory
+    if (!checkZip || checkZip.length < 5) {
       return
     }
+    let warehouse = 'otherWarehouse';
+    if (checkZip >= 90000 && checkZip <= 96699) {
+      warehouse = 'caliWarehouse'
+    }
     this.setState({
-      zipcode: this.state.checkZip,
-      changeZip: false
-    })
-  }
-
-  changeQty(event, num) {
-    event.preventDefault();
-    this.setState({
-      qty: this.state.qty + num
+      zipcode: checkZip,
+      changeZip: false,
+      warehouse: warehouse,
+      maxInventory: items[warehouse]
     })
   }
 
@@ -206,6 +205,13 @@ export default class Product extends React.Component {
     this.setState({
       changeZip: !this.state.changeZip,
       checkZip: ''
+    })
+  }
+
+  changeQty(event, num) {
+    event.preventDefault();
+    this.setState({
+      qty: this.state.qty + num
     })
   }
 
@@ -248,7 +254,7 @@ export default class Product extends React.Component {
                       <form className='width-100 justify-between row' action="submit">
                         <label className='my-auto'>QTY </label>
                         <div className="row muted-btn justify-between">
-                          <button className='qty-btn material-symbols-outlined' onClick={event => this.changeQty(event, -1)} disabled={(qty - 1) < 1} >remove</button>
+                          <button className='qty-btn material-symbols-outlined' onClick={event => this.changeQty(event, -1)} disabled={(qty - 1) < 0} >remove</button>
                           <div className=' qty text-center'>{qty}</div>
                         <button className='qty-btn material-symbols-outlined' onClick={event => this.changeQty(event, 1)} disabled={(qty + 1) > maxInventory}>add</button>
                         </div>
