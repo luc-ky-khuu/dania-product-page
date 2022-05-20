@@ -94,13 +94,15 @@ export default class Product extends React.Component {
       variant: null,
       warehouse: null,
       maxInventory: 0,
-      qty: 0
+      qty: 0,
+      cart:{}
     }
     this.makeColorBoxes = this.makeColorBoxes.bind(this);
     this.showDetails = this.showDetails.bind(this);
-    this.handleChange = this.handleChange.bind(this);
+    this.handleZip = this.handleZip.bind(this);
     this.changeZipForm = this.changeZipForm.bind(this);
     this.submitZip = this.submitZip.bind(this);
+    this.addCart = this.addCart.bind(this);
   }
 
   componentDidMount() {
@@ -108,7 +110,7 @@ export default class Product extends React.Component {
     // .then(response => response.json())
     // .then(result => this.setState({
     //   product: result,
-    //   variat: 0
+    //   variant: 0
     // }))
     const { zipcode } = this.state;
     if (zipcode) {
@@ -180,7 +182,7 @@ export default class Product extends React.Component {
     )
   }
 
-  handleChange(event) {
+  handleZip(event) {
     event.preventDefault();
     this.setState({
       changeZip: true
@@ -210,6 +212,25 @@ export default class Product extends React.Component {
       changeZip: false,
       warehouse: warehouse,
       maxInventory: items[warehouse]
+    })
+  }
+
+  addCart(event) {
+    event.preventDefault();
+    const { cart, qty, product, variant } = this.state;
+    if (qty === 0) {
+      return;
+    }
+    const sku = product.variants[variant].sku
+    const updatedCart = Object.assign({}, cart);
+    if (updatedCart[sku]) {
+      updatedCart[sku] = updatedCart[sku] + qty
+    } else {
+      updatedCart[sku] = qty
+    }
+    this.setState({
+      cart: updatedCart,
+      qty: 0
     })
   }
 
@@ -244,7 +265,7 @@ export default class Product extends React.Component {
           <div className='col-8'>
             <img src='https://cdn.shopify.com/s/files/1/1921/1117/products/P16_19-2660-3_BE_upd_2_5000x.jpg?v=1628331535'></img>
           </div>
-          <div className="col-4 width-100">
+          <div className="col-4">
             <h1 className='m-0'>{product.productName}</h1>
             <h3 className='muted-text'>{product.variants[variant].title}</h3>
             <hr></hr>
@@ -256,7 +277,7 @@ export default class Product extends React.Component {
               { changeZip
                 ? <form className='mt-1' onSubmit={this.submitZip} action="submit">
                     {!zipcode && <p className='muted-text'>Enter zip code to check availability</p>}
-                    <input className='lh' type="text" placeholder='Enter zip code' value={checkZip} onChange={this.handleChange} />
+                    <input className='lh' type="text" placeholder='Enter zip code' value={checkZip} onChange={this.handleZip} />
                     <div className="row mt-1">
                       <button className='btn add-btn' type="submit">Submit</button>
                       <a className='btn muted-btn' onClick={this.changeZipForm}>Cancel</a>
@@ -268,13 +289,13 @@ export default class Product extends React.Component {
                       <p><a className='zipcode' href='' onClick={this.changeZipForm}>Change Zip</a></p>
                     </div>
                     {maxInventory ? <p className='mt-0'>Item in stock!</p> : <p className='mt-0'>Item unavailable in this location</p>}
-                    <div className="width-100">
-                      <form className='width-100 justify-between row' action="submit">
+                    <div className="">
+                      <form className='justify-between row' action="submit" onSubmit={this.addCart}>
                         <label className='my-auto'>QTY </label>
-                        <div className="row muted-btn justify-between">
+                        <div className="row muted-btn">
                           <button className='qty-btn material-symbols-outlined' onClick={event => this.changeQty(event, -1)} disabled={(qty - 1) < 0} >remove</button>
                           <div className=' qty text-center'>{qty}</div>
-                        <button className='qty-btn material-symbols-outlined' onClick={event => this.changeQty(event, 1)} disabled={(qty + 1) > maxInventory}>add</button>
+                          <button className='qty-btn material-symbols-outlined' onClick={event => this.changeQty(event, 1)} disabled={(qty + 1) > maxInventory}>add</button>
                         </div>
                         <button className='btn add-btn add-cart' disabled={maxInventory === 0}>{maxInventory > 0 ? 'Add to Cart' : 'Not Available'}</button>
                       </form>

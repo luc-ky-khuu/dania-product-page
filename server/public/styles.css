@@ -75,10 +75,6 @@ a:nth-child(1) > div.no-stock-border {
   text-decoration: none;
 }
 
-.lh {
-  line-height: 2rem;
-}
-
 .btn {
   border: none;
   padding: 0.5rem 0.8rem;
@@ -158,8 +154,4 @@ button:active:disabled {
   'wght' 400,
   'GRAD' 0,
   'opsz' 48
-}
-
-.fs-4 {
-  font-size:2rem;
 }
