@@ -87,7 +87,7 @@ export default class Product extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      zipcode: 93907,
+      zipcode: null,
       changeZip: true,
       checkZip: '',
       product: null,
@@ -133,7 +133,6 @@ export default class Product extends React.Component {
   changeVariant(index) {
     const { product, warehouse } = this.state;
     const items = product.variants[index].inventory
-    console.log('items', items[warehouse])
     this.setState({
       variant: index,
       maxInventory: items[warehouse],
@@ -144,20 +143,22 @@ export default class Product extends React.Component {
   makeColorBoxes() {
     return (
       product.variants.map((item, index) => {
-        const { product, variant } = this.state;
+        const { product, variant, maxInventory, warehouse } = this.state;
         let bg = product.variants[index].colorHex;
+        let inventory = product.variants[index].inventory
         let border = 'color-box-border'
+        let box = 'color-box'
         if (product.variants[index].colorHex.length > 7) {
           bg = product.variants[index].color;
         }
-        if (variant === index) {
-          border = 'color-box-border selected-box'
+        if (inventory[warehouse] === 0) {
+          border = 'no-stock-border';
+          box = 'color-box no-stock';
         }
         return (
           <a key={index} onClick={() => this.changeVariant(index)}>
-            <div className={border}>
-              <div className='color-box' style={{ backgroundColor: bg }}>
-              </div>
+            <div className={variant === index ? `${border} selected-box` : border} >
+              <div className={box} style={{ backgroundColor: bg }}></div>
             </div>
           </a>
         )
@@ -204,7 +205,6 @@ export default class Product extends React.Component {
     if (checkZip >= 90000 && checkZip <= 96699) {
       warehouse = 'caliWarehouse'
     }
-    console.log('warehouse', warehouse)
     this.setState({
       zipcode: checkZip,
       changeZip: false,
@@ -233,7 +233,6 @@ export default class Product extends React.Component {
 
   render() {
     const { product, variant, zipcode, changeZip, checkZip, qty, maxInventory } = this.state
-    console.log(maxInventory);
     if (!product) {
       return(
         <div>
@@ -249,13 +248,14 @@ export default class Product extends React.Component {
             <h1 className='m-0'>{product.productName}</h1>
             <h3 className='muted-text'>{product.variants[variant].title}</h3>
             <hr></hr>
-            <h2 className='m-0 fs-3'>${product.variants[variant].price}</h2>
+            <h2 className='m-0 fs-3 fw-400'>${product.variants[variant].price}</h2>
             <div className='row mt-1'>
               {this.makeColorBoxes()}
             </div>
             <div>
               { changeZip
                 ? <form className='mt-1' onSubmit={this.submitZip} action="submit">
+                    {!zipcode && <p className='muted-text'>Enter zip code to check availability</p>}
                     <input className='lh' type="text" placeholder='Enter zip code' value={checkZip} onChange={this.handleChange} />
                     <div className="row mt-1">
                       <button className='btn add-btn' type="submit">Submit</button>
@@ -267,6 +267,7 @@ export default class Product extends React.Component {
                       <p><span className='bold'>Ship To:</span> {zipcode}</p>
                       <p><a className='zipcode' href='' onClick={this.changeZipForm}>Change Zip</a></p>
                     </div>
+                    {maxInventory ? <p className='mt-0'>Item in stock!</p> : <p className='mt-0'>Item unavailable in this location</p>}
                     <div className="width-100">
                       <form className='width-100 justify-between row' action="submit">
                         <label className='my-auto'>QTY </label>
