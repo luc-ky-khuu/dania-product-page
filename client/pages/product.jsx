@@ -88,7 +88,7 @@ export default class Product extends React.Component {
     super(props);
     this.state = {
       zipcode: 93907,
-      changeZip: false,
+      changeZip: true,
       checkZip: '',
       product: null,
       variant: null,
@@ -110,6 +110,20 @@ export default class Product extends React.Component {
     //   product: result,
     //   variat: 0
     // }))
+    const { zipcode } = this.state;
+    if (zipcode) {
+      if (zipcode >= 90000 && zipcode <= 96699) {
+        this.setState({
+          warehouse: 'caliWarehouse',
+          changeZip: false
+        })
+      } else {
+        this.setState({
+          warehouse: 'otherWarehouse',
+          changeZip: false
+        })
+      }
+    }
     this.setState({
       product: product,
       variant: 0
@@ -119,6 +133,7 @@ export default class Product extends React.Component {
   changeVariant(index) {
     const { product, warehouse } = this.state;
     const items = product.variants[index].inventory
+    console.log('items', items[warehouse])
     this.setState({
       variant: index,
       maxInventory: items[warehouse],
@@ -189,6 +204,7 @@ export default class Product extends React.Component {
     if (checkZip >= 90000 && checkZip <= 96699) {
       warehouse = 'caliWarehouse'
     }
+    console.log('warehouse', warehouse)
     this.setState({
       zipcode: checkZip,
       changeZip: false,
@@ -217,6 +233,7 @@ export default class Product extends React.Component {
 
   render() {
     const { product, variant, zipcode, changeZip, checkZip, qty, maxInventory } = this.state
+    console.log(maxInventory);
     if (!product) {
       return(
         <div>
@@ -258,7 +275,7 @@ export default class Product extends React.Component {
                           <div className=' qty text-center'>{qty}</div>
                         <button className='qty-btn material-symbols-outlined' onClick={event => this.changeQty(event, 1)} disabled={(qty + 1) > maxInventory}>add</button>
                         </div>
-                        <button className='btn add-btn add-cart'>Add to Cart</button>
+                        <button className='btn add-btn add-cart' disabled={maxInventory === 0}>{maxInventory > 0 ? 'Add to Cart' : 'Not Available'}</button>
                       </form>
                     </div>
                   </>

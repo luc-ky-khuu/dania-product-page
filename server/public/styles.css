@@ -108,8 +108,9 @@ a:nth-child(1) > div.color-box-border {
 button:disabled,
 button:hover:disabled,
 button:active:disabled {
-  background-color: rgb(228, 228, 228);
-  color: rgb(175, 175, 175);
+  background-color: rgb(204, 204, 204);
+  color: rgb(167, 167, 167);
+  cursor: default;
 }
 .qty-btn {
   width: 2rem;
